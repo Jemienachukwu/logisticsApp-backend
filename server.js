@@ -29,7 +29,7 @@ mongoose.connect(
   (err) => {
     if (err) {
       console.log(`Error: ${err.message}`);
-      process.exit(1);
+      //   process.exit(1);
     }
     console.log("Mongodb connection successful".blue);
   },
