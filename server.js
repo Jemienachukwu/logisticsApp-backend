@@ -1,16 +1,14 @@
-const express = require("express");
-const cors = require("cors");
-const mongoose = require("mongoose");
-const colors = require("colors");
-
+import express from "express";
+import cors from "cors";
+import mongoose from "mongoose";
+import colors from "colors";
+import dotenv from "dotenv";
+import UserRoutes from "./routes/userRouter.js";
 const app = express();
-require("dotenv").config();
+
+dotenv.config();
 app.use(cors());
 app.use(express.json());
-
-app.get("/message", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
 
 const PORT = process.env.PORT || 8000;
 
@@ -36,4 +34,4 @@ mongoose.connect(
   { useFindAndModify: false }
 );
 
-app.use("/users", require("./routes/userRouter"));
+app.use("/users", UserRoutes);
