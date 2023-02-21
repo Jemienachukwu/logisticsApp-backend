@@ -27,11 +27,14 @@ mongoose.connect(
   (err) => {
     if (err) {
       console.log(`Error: ${err.message}`);
-      //   process.exit(1);
+      // process.exit(1);
     }
     console.log("Mongodb connection successful".blue);
   },
   { useFindAndModify: false }
 );
+app.get("/", (req, res) => {
+  res.send("API IS RUNNING...");
+});
 
-app.use("/users", UserRoutes);
+app.use("/api/users", UserRoutes);
