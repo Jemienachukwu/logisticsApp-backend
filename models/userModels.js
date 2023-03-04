@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+// import bcrypt from "bcryptjs";
 const userSchema = mongoose.Schema(
   {
-    firstName: {
+    fullName: {
       type: String,
       required: true,
     },
-    lastName: {
+    category: {
       type: String,
       required: true,
     },
