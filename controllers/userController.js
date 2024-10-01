@@ -20,35 +20,37 @@ export const emailVerify = asyncHandler(async (req, res) => {
     });
   }
 });
+
 export const registerUser = asyncHandler(async (req, res) => {
-  const { fullName, category, email, password, phoneNumber } = req.body;
-  const emailVerify = await User.findOne({ email }, null, { maxTimeMS: 5000 });
-  const phoneVerify = await User.findOne({ phoneNumber }, null, {
-    maxTimeMS: 5000,
+  const { fullName, isRider, email, password, phoneNumber } = req.body;
+
+  const userExists = await User.findOne({ email });
+
+  if (userExists) {
+    res.status(400);
+    throw new Error("Phone or email already exist");
+  }
+
+  const user = await User.create({
+    fullName,
+    isRider,
+    email,
+    password,
+    phoneNumber,
   });
 
-  if (emailVerify || phoneVerify) {
-    return res.status(401).json({ message: "Phone or email already exist" });
-  } else {
-    const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    const user = {
-      fullName,
-      email,
-      phoneNumber,
-    };
-
-    await User.create({
-      fullName,
-      category,
-      email,
-      password: passwordHash,
-      phoneNumber,
-      user,
+  if (user) {
+    res.status(201).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      isRider: user.isRider,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
     });
-
-    return res.status(201).json({ message: "user created successfully" });
+  } else {
+    res.status(400);
+    throw new Error("invalid user data");
   }
 });
 
@@ -61,9 +63,9 @@ export const loginUser = asyncHandler(async (req, res) => {
       res.json({
         _id: user._id,
         fullName: user.fullName,
-        category: user.category,
+        isRider: user.isRider,
         email: user.email,
-        roles: user.roles,
+
         token: generateToken(user._id),
         isAdmin: user.isAdmin,
         profilePic: user.profilePic,
@@ -83,9 +85,9 @@ export const userProfile = asyncHandler(async (req, res) => {
     res.json({
       _id: user._id,
       fullName: user.fullName,
-      category: user.category,
+      isRider: user.isRider,
       email: user.email,
-      roles: user.roles,
+
       isAdmin: user.isAdmin,
       profilePic: user.profilePic,
       phoneNumber: user.phoneNumber,
